@@ -6,12 +6,13 @@
 #define KDTREE_KDTREE_H
 
 #include <vector>
-#include <limits>
 
 class kdtree {
+public:
+    enum SPLIT_MODE {DEPTH, VARIANCE};
+private:
 
     using IndiceIter = std::vector<int>::iterator;
-
     struct _node
     {
         int id;
@@ -56,11 +57,34 @@ class kdtree {
 
     std::vector<std::vector<double>> * data;
 
+    SPLIT_MODE mSplitMode;
+
 public:
-    kdtree(std::vector<std::vector<double>>& data);
-    ~kdtree();
+
+    /**
+     * create a kdtree
+     * @param data which is used to create kdtree, row stands for a sample and col stands for feature.
+     * @param mode method to split the hyperplane, DEPTH or VARIANCE
+     */
+    explicit kdtree(std::vector<std::vector<double>>& data, SPLIT_MODE mode = DEPTH);
+
+    /**
+     * find all samples within certain distance from input target.
+     * @param input target data, must has the same feature dimension with sample data.
+     * @param distance
+     * @return index of all samples within certain distance from input target.
+     */
     std::vector<int> RadiusSearch(const std::vector<double>& input, const double& distance);
+
+    /**
+     * find the K nearest data samples from input.
+     * @param input target data, must has the same feature dimension with sample data.
+     * @param K number of nearest data samples you want to find.
+     * @return index of K nearest data samples from input
+     */
     std::vector<int> NearestSearch(const std::vector<double>& input, const int& K = 1);
+
+    ~kdtree();
 
 };
 

@@ -23,9 +23,23 @@ int main() {
         {2,3},{5,4},{9,6},{4,7},{8,1},{7,2}
     };
 
-    kdtree kd(test_data);
-    auto idx = kd.NearestSearch( {2.1,3.1} ) [0];
+    kdtree kd(test_data, kdtree::DEPTH);
 
-    cout << test_data[idx][0]<<" " << test_data[idx][0]<< endl;
+    cout  << "NearestSearch\n";
+    auto idxs = kd.NearestSearch( {2, 4.5}, 2);
+
+    for(auto idx: idxs)
+    {
+        cout << "id: "<< idx<<" coor: "<<test_data[idx][0]<<" " << test_data[idx][1]<< endl;
+    }
+
+
+    cout  << "RadiusSearch\n";
+    idxs = kd.RadiusSearch( {2, 4.5}, 3.5);
+
+    for(auto idx: idxs)
+    {
+        cout << "id: "<< idx<<" coor: "<<test_data[idx][0]<<" " << test_data[idx][1]<< endl;
+    }
 }
 ``` 
