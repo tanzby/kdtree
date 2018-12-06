@@ -311,33 +311,39 @@ IndiceIter kdtree<T>::GetMidNum(IndiceIter begin, IndiceIter end, int dim)
 }
 
 template<typename T>
-std::string kdtree<T>::Node2Dot(_node *node) {
+std::string kdtree<T>::Node2Dot(_node *node, bool erase_info) {
     if (node== nullptr)
         return "";
 
     char buf[256];
-    if (node->is_visit)
+
+    if (erase_info)
     {
         sprintf(buf,
-                R"([shape=circle, label="ID: %d DIM:%d\nDIS: %8.4lf\nVN: %8.4lf\nVI: %8.4lf", fillcolor="%s", style=filled])",
-                node->id,
-                node->split_dim,
-                node->distance,
-                double((*data)[node->id][node->split_dim]),
-                double((*input)[node->split_dim]),
-                "#FFAA22");
+                R"([shape=circle, label="ID: %d DIM: %d", fillcolor="%s", style=filled])",
+                node->id, node->split_dim, "#FFFFFF");
     }
     else
     {
-        sprintf(buf,
-                R"([shape=circle, label="ID: %d DIM: %d\nVN: %8.4lf\nVI: %8.4lf", fillcolor="%s", style=filled])",
-                node->id,
-                node->split_dim,
-                double((*data)[node->id][node->split_dim]),
-                double((*input)[node->split_dim]),
-                "#FFFFFF");
+        if (node->is_visit) {
+            sprintf(buf,
+                    R"([shape=circle, label="ID: %d DIM:%d\nDIS: %8.4lf\nVN: %8.4lf\nVI: %8.4lf", fillcolor="%s", style=filled])",
+                    node->id,
+                    node->split_dim,
+                    node->distance,
+                    double((*data)[node->id][node->split_dim]),
+                    double((*input)[node->split_dim]),
+                    "#FFAA22");
+        } else {
+            sprintf(buf,
+                    R"([shape=circle, label="ID: %d DIM: %d\nVN: %8.4lf\nVI: %8.4lf", fillcolor="%s", style=filled])",
+                    node->id,
+                    node->split_dim,
+                    double((*data)[node->id][node->split_dim]),
+                    double((*input)[node->split_dim]),
+                    "#FFFFFF");
+        }
     }
-
 
     std::string cur_node_name = "node"+std::to_string(node->id);
     std::string cur_node_info = cur_node_name+ buf+"\n";
@@ -352,25 +358,25 @@ std::string kdtree<T>::Node2Dot(_node *node) {
     if(node->left)
     {
         _left = cur_node_name + " -> node"+std::to_string(node->left->id)+"\n";
-        _left += Node2Dot(node->left);
+        _left += Node2Dot(node->left, erase_info);
     }
     if(node->right)
     {
         _right = cur_node_name + " -> node"+std::to_string(node->right->id)+"\n";
-        _right += Node2Dot(node->right);
+        _right += Node2Dot(node->right, erase_info);
     }
 
     return cur_node_info + _left + _right;
 }
 
 template<typename T>
-std::string kdtree<T>::ToDot() {
+std::string kdtree<T>::ToDot(bool erase_info) {
     if (_root_ == nullptr )
     {
         std::cout << "No receive any data" << std::endl;
         return std::string();
     }
-    std::string _tmp ="digraph kdtree {\n" + Node2Dot(_root_) +"}\n";
+    std::string _tmp = "digraph kdtree {\n" + Node2Dot(_root_, erase_info) + "}\n";
     std::ofstream out(".kdtree.dot");
     out << _tmp;out.close();
     char command_str[64];

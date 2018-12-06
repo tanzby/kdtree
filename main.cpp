@@ -5,9 +5,6 @@
 using namespace std;
 
 
-
-
-
 int main() {
 
     std::vector<std::vector<double >> test_data
@@ -33,4 +30,6 @@ int main() {
     {
         cout << "id: "<< idx<<" coor: "<<test_data[idx][0]<<" " << test_data[idx][1]<< endl;
     }
+
+    kd.ToDot(true); // save tree
 }

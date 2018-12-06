@@ -68,7 +68,7 @@ namespace kt
 
         IndiceIter GetMidNum(IndiceIter begin, IndiceIter end, int dim);
 
-        std::string Node2Dot(_node* node);
+        std::string Node2Dot(_node *node, bool erase_info);
 
         const std::vector<std::vector<T>> * data;
 
@@ -101,13 +101,14 @@ namespace kt
          */
         std::vector<int> NearestSearch(const std::vector<T>& input, const int& K = 1);
 
-
         /**
          * generate a bitmap of tree's structure. PNG file can be find in the workspace folder
          * Power by [Graphviz](https://www.graphviz.org/)
+         * @param erase_info if ture, only ID and split dimension will keep, otherwise lastest search info will
+         *                   be wrote to image.
          * @return content of .dot file
          */
-        std::string ToDot();
+        std::string ToDot(bool erase_info = false);
 
 
         ~kdtree();

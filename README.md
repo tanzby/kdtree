@@ -16,6 +16,7 @@ Simple implementation of kdtree
 
 using namespace std;
 
+
 int main() {
 
     std::vector<std::vector<double >> test_data
@@ -23,7 +24,7 @@ int main() {
         {2,3},{5,4},{9,6},{4,7},{8,1},{7,2}
     };
 
-    kdtree kd(test_data, kdtree::DEPTH);
+    kt::kdtree<double> kd(test_data, kt::DEPTH);
 
     cout  << "NearestSearch\n";
     auto idxs = kd.NearestSearch( {2, 4.5}, 2);
@@ -41,5 +42,22 @@ int main() {
     {
         cout << "id: "<< idx<<" coor: "<<test_data[idx][0]<<" " << test_data[idx][1]<< endl;
     }
+
+    kd.ToDot(true); // save tree
 }
 ``` 
+
+then output
+```
+NearestSearch
+id: 0 coor: 2 3
+id: 1 coor: 5 4
+RadiusSearch
+id: 1 coor: 5 4
+id: 3 coor: 4 7
+id: 0 coor: 2 3
+```
+
+PNG file can be found in workspace folder
+
+![kdtree structure](image/1544084302311.png);
