@@ -6,29 +6,34 @@
 #define KDTREE_KDTREE_H
 
 #include <vector>
+#include <limits>
+#include <queue>
+#include <string>
 
-class kdtree {
-public:
+namespace kt
+{
+
     enum SPLIT_MODE {DEPTH, VARIANCE};
-private:
 
-    using IndiceIter = std::vector<int>::iterator;
     struct _node
     {
         int id;
         int split_dim;
         double distance;
+        bool is_visit;
         _node *left, *right;
         _node()
-        :
-        left(nullptr),
-        right(nullptr),
-        distance(std::numeric_limits<double>::max()),
-        split_dim(-1),
-        id(-1){}
+                :
+                is_visit(false),
+                left(nullptr),
+                right(nullptr),
+                distance(-1),
+                split_dim(-1),
+                id(-1){}
 
         bool operator < (_node& o)
         {
+            if (this->distance == o.distance ) return this->id < o.id;
             return this->distance < o.distance;
         }
     };
@@ -37,56 +42,81 @@ private:
     {
         bool operator () (const _node* n1, const _node* n2)
         {
-            return n1->distance < n2->distance;
+            if (n1->distance == n2->distance) return n1->id <  n2->id;
+            return n1->distance < n2->distance ;
         }
     };
 
-    _node* _root_;
 
-    unsigned long mSampleNum;
+    using IndiceIter = std::vector<int>::iterator;
+    using NodeQueue  = std::priority_queue<_node*, std::vector<_node*>, node_ptr_cmp >;
 
-    unsigned long mFeatureNum; // assume that all samples have the same feature number.
+    template <typename T>
+    class kdtree
+    {
+    private:
 
-    bool* is_visit;
+        _node* _root_;
 
-    _node* BuildTree(IndiceIter begin, IndiceIter end, int depth);
+        unsigned long mSampleNum;
 
-    int FindTheSplitDim(IndiceIter begin, IndiceIter end, int depth);
+        unsigned long mFeatureNum; // assume that all samples have the same feature number.
 
-    IndiceIter GetMidNum(IndiceIter begin, IndiceIter end, int dim);
+        _node* BuildTree(IndiceIter begin, IndiceIter end, int depth);
 
-    std::vector<std::vector<double>> * data;
+        int FindTheSplitDim(IndiceIter begin, IndiceIter end, int depth);
 
-    SPLIT_MODE mSplitMode;
+        IndiceIter GetMidNum(IndiceIter begin, IndiceIter end, int dim);
 
-public:
+        std::string Node2Dot(_node* node);
 
-    /**
-     * create a kdtree
-     * @param data which is used to create kdtree, row stands for a sample and col stands for feature.
-     * @param mode method to split the hyperplane, DEPTH or VARIANCE
-     */
-    explicit kdtree(std::vector<std::vector<double>>& data, SPLIT_MODE mode = DEPTH);
+        const std::vector<std::vector<T>> * data;
 
-    /**
-     * find all samples within certain distance from input target.
-     * @param input target data, must has the same feature dimension with sample data.
-     * @param distance
-     * @return index of all samples within certain distance from input target.
-     */
-    std::vector<int> RadiusSearch(const std::vector<double>& input, const double& distance);
+        const std::vector<T>* input;
 
-    /**
-     * find the K nearest data samples from input.
-     * @param input target data, must has the same feature dimension with sample data.
-     * @param K number of nearest data samples you want to find.
-     * @return index of K nearest data samples from input
-     */
-    std::vector<int> NearestSearch(const std::vector<double>& input, const int& K = 1);
+        SPLIT_MODE mSplitMode;
 
-    ~kdtree();
+    public:
 
-};
+        /**
+         * create a kdtree
+         * @param data which is used to create kdtree, row stands for a sample and col stands for feature.
+         * @param mode method to split the hyperplane, DEPTH or VARIANCE
+         */
+        kdtree(std::vector<std::vector<T>>& data, SPLIT_MODE mode);
 
+        /**
+         * find all samples within certain distance from input target.
+         * @param input target data, must has the same feature dimension with sample data.
+         * @param distance
+         * @return index of all samples within certain distance from input target.
+         */
+        std::vector<int> RadiusSearch(const std::vector<T>& input, const double& distance);
+
+        /**
+         * find the K nearest data samples from input.
+         * @param input target data, must has the same feature dimension with sample data.
+         * @param K number of nearest data samples you want to find.
+         * @return index of K nearest data samples from input
+         */
+        std::vector<int> NearestSearch(const std::vector<T>& input, const int& K = 1);
+
+
+        /**
+         * generate a bitmap of tree's structure. PNG file can be find in the workspace folder
+         * Power by [Graphviz](https://www.graphviz.org/)
+         * @return content of .dot file
+         */
+        std::string ToDot();
+
+
+        ~kdtree();
+
+    };
+
+
+}
+
+#include "../src/kdtree.cpp"
 
 #endif //KDTREE_KDTREE_H

@@ -5,4 +5,6 @@ set(CMAKE_CXX_STANDARD 11)
 
 include_directories(include)
 
-add_executable(kdTree main.cpp src/kdtree.cpp)
+add_executable(kdTree main.cpp)
+
+add_executable(kdTreeTest test/test.cpp)

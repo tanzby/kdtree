@@ -4,6 +4,10 @@
 
 using namespace std;
 
+
+
+
+
 int main() {
 
     std::vector<std::vector<double >> test_data
@@ -11,7 +15,7 @@ int main() {
         {2,3},{5,4},{9,6},{4,7},{8,1},{7,2}
     };
 
-    kdtree kd(test_data, kdtree::DEPTH);
+    kt::kdtree<double> kd(test_data, kt::DEPTH);
 
     cout  << "NearestSearch\n";
     auto idxs = kd.NearestSearch( {2, 4.5}, 2);
@@ -30,14 +34,3 @@ int main() {
         cout << "id: "<< idx<<" coor: "<<test_data[idx][0]<<" " << test_data[idx][1]<< endl;
     }
 }
-
-/*
- *
-NearestSearch
-id: 0 coor: 2 3
-id: 1 coor: 5 4
-RadiusSearch
-id: 0 coor: 2 3
-id: 1 coor: 5 4
-id: 3 coor: 4 7
- */
