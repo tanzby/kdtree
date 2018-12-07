@@ -1,7 +1,6 @@
 # kdtree
 
-Simple implementation of kdtree
-
+Simple implementation of kdtree. Support using Graphviz to draw the structure of kdtree.
 
 ## require
 
@@ -61,3 +60,24 @@ id: 0 coor: 2 3
 PNG file can be found in workspace folder
 
 ![kdtree structure](image/1544084302311.png);
+
+## comparison
+
+Data size: 50000 × 3
+``` 
+Build tree cost: 0.128715s
+```
+
+Nearest Search for K=10
+``` 
+Nearest Search: 
+total_time_native: 23.0044s
+total_time_kdtree: 2.5603s
+```
+
+Radius Search for Radius = 10000
+``` 
+Radius Search: 
+total_time_native: 29.2782s
+total_time_kdtree: 11.9156s
+```

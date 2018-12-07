@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <kdtree.h>
+#include <kdtree.hpp>
 
 using namespace std;
 
@@ -12,7 +12,8 @@ int main() {
         {2,3},{5,4},{9,6},{4,7},{8,1},{7,2}
     };
 
-    kt::kdtree<double> kd(test_data, kt::DEPTH);
+    kt::kdtree<double> kd;
+    kd.SetData(test_data, kt::DEPTH);
 
     cout  << "NearestSearch\n";
     auto idxs = kd.NearestSearch( {2, 4.5}, 2);
